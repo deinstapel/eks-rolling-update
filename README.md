@@ -1,24 +1,33 @@
-<p align="center">
-  <img height="150px" src="./logo.png"  alt="EKS Rolling Update" title="EKS Rolling Update">
-</p>
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [EKS Rolling Update](#eks-rolling-update)
+- [Intro](#intro)
+  - [Requirements](#requirements)
+    - [IAM Requirements](#iam-requirements)
+    - [RBAC permissions](#rbac-permissions)
+  - [Installation](#installation)
+    - [From source](#from-source)
+  - [Usage](#usage)
+  - [Container images](#container-images)
+  - [Terraform example](#terraform-example)
+  - [Configuration](#configuration)
+    - [Core Configuration](#core-configuration)
+    - [ASG & Node-Related Controls](#asg--node-related-controls)
+    - [K8S Node & Pod Controls](#k8s-node--pod-controls)
+  - [Run Modes](#run-modes)
+  - [Batching](#batching)
+  - [Examples](#examples)
+  - [Contributing](#contributing)
+  - [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # EKS Rolling Update
 
 EKS Rolling Update is a utility for updating the launch configuration or template of worker nodes in an EKS cluster.
 
-[![Build Status](https://travis-ci.org/hellofresh/eks-rolling-update.svg?branch=master)](https://travis-ci.org/hellofresh/eks-rolling-update)
-
-
-- [Intro](#intro)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [Contributing](#contributing)
-- [License](#license)
-
-
-<a name="intro"></a>
 # Intro
 
 EKS Rolling Update is a utility for updating the launch configuration or template of worker nodes in an EKS cluster. It
@@ -38,7 +47,6 @@ To achieve this, it performs the following actions:
 * Resumes AWS Autoscaling actions
 * Resumes Kubernetes Autoscaler (Optional)
 
-<a name="requirements"></a>
 ## Requirements
 
 * [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) installed
@@ -61,15 +69,29 @@ ec2:DescribeLaunchTemplates
 ec2:DescribeInstances
 ```
 
-<a name="installation"></a>
+### RBAC permissions
+
+The following [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) permission rules are required for graceful termination:
+
+```
+- apiGroups: [""]
+  resources: ["pods/eviction"]
+  verbs: ["create"]
+
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list"]
+
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get", "patch", "list", "watch"]
+
+- apiGroups: ["apps"]
+  resources: ["statefulsets", "daemonsets", "deployments", "replicasets"]
+  verbs: ["get", "list"]
+```
+
 ## Installation
-
-### From PyPi
-
-```
-pip3 install eks-rolling-update
-```
-
 ### From source
 
 ```
@@ -78,7 +100,6 @@ source venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
-<a name="usage"></a>
 ## Usage
 
 ```
@@ -99,6 +120,29 @@ Example:
 ```
 eks_rolling_update.py -c my-eks-cluster
 ```
+
+We recommend running the tool as (cron)job within your EKS cluster (see [Terraform example](#terraform-example)), as this allows for easy RBAC permission management.
+
+## Container images
+
+Container images for this project are made available as [GitHub Packages](https://github.com/orgs/deinstapel/packages?repo_name=eks-rolling-update).
+
+You can run them using docker or your preferred container runtime:
+
+```bash
+docker run -ti --rm \
+  -e AWS_DEFAULT_REGION \
+  -v "${HOME}/.aws:/root/.aws" \
+  -v "${HOME}/.kube/config:/root/.kube/config" \
+  ghcr.io/deinstapel/eks-rolling-update/eks-rolling-update:edge \
+  -c my-cluster
+```
+
+Pass in any additional environment variables and options as described elsewhere in this file.
+
+## Terraform example
+
+A terraform example on how to deploy `eks-rolling-update` as a Kubernetes CronJob in your EKS cluster can be found [here](/terraform_example). Adjust according to your needs.
 
 ## Configuration
 
@@ -216,33 +260,12 @@ $ cat .env
 DRY_RUN=1
 ```
 
-<a name="docker"></a>
-## Docker
-
-Although no public Docker image is currently published for this project, feel free to use the included [Dockerfile](Dockerfile) to build your own image.
-
-```bash
-make docker-dist version=1.0.DEV
-```
-
-After building the image, run using the command
-```bash
-docker run -ti --rm \
-  -e AWS_DEFAULT_REGION \
-  -v "${HOME}/.aws:/root/.aws" \
-  -v "${HOME}/.kube/config:/root/.kube/config" \
-  eks-rolling-update:latest \
-  -c my-cluster
-```
-
 Pass in any additional environment variables and options as described elsewhere in this file.
 
-<a name="contributing"></a>
 ## Contributing
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
-<a name="licence"></a>
 ## License
 
 This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details
