@@ -31,6 +31,9 @@ help:
 
 setup: clean virtualenv requirements test-requirements
 
+doctoc:
+	doctoc --github README.md
+
 run:
 	python3 $(CURDIR)/eks_rolling_update.py --help
 
