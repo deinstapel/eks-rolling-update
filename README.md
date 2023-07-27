@@ -134,7 +134,7 @@ docker run -ti --rm \
   -e AWS_DEFAULT_REGION \
   -v "${HOME}/.aws:/root/.aws" \
   -v "${HOME}/.kube/config:/root/.kube/config" \
-  ghcr.io/deinstapel/eks-rolling-update/eks-rolling-update:edge \
+  ghcr.io/deinstapel/eks-rolling-update:edge \
   -c my-cluster
 ```
 
