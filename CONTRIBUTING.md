@@ -2,15 +2,17 @@
 
 :+1::tada: First off, thanks for taking the time to contribute! :tada::+1:
 
-The following is a set of guidelines for contributing to eks-rolling-update, hosted in the [HelloFresh Organization](https://github.com/hellofresh) on GitHub.
+The following is a set of guidelines for contributing to eks-rolling-update, hosted in the [deinstapel Organization](https://github.com/deinstapel) on GitHub.
 
-These are just guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
+These are just guidelines, not rules. Use your best judgement, and feel free to propose changes to this document in a pull request.
 
 ## Code of Conduct
 
-This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [engineering@hellofresh.com](mailto:engineering@hellofresh.com).
+This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to the project maintainers.
 
-We accept contributions via Pull Requests on [Github](https://github.com/hellofresh/eks-rolling-update/pulls).
+We accept contributions via Pull Requests on [Github](https://github.com/deinstapel/eks-rolling-update/pulls).
+
+**Please make sure to select the correct base repository (deinstapel/eks-rolling-update) when creating a pull request against this fork!**
 
 ## How Can I Contribute?
 
@@ -54,4 +56,4 @@ Unsure where to begin contributing? You can start by looking through the issues.
 * Document new code
 * End files with a newline.
 
-Happy Coding from the HelloFresh Engineering team!
+Happy Coding from the deinstapel team!
