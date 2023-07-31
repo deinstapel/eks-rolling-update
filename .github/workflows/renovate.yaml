@@ -1,0 +1,27 @@
+name: Renovate
+on:
+  schedule:
+    - cron: '0 10 * * *'
+  workflow_dispatch:
+
+env:
+  RENOVATE_VERSION: 36.25.5-full # renovate: datasource=docker depName=renovate packageName=ghcr.io/renovatebot/renovate
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: set-env-vars
+        run: |
+          echo "RENOVATE_REPOSITORIES=['${GITHUB_REPOSITORY}']" >> "$GITHUB_ENV"
+      - name: Self-hosted Renovate
+        uses: renovatebot/github-action@v39.0.1
+        with:
+          renovate-version: ${{ env.RENOVATE_VERSION }}
+          token: ${{ secrets.RENOVATE_TOKEN }}
+        env:
+          RENOVATE_REVIEWERS: "['jasper-ben', 'martin31821']"
+          RENOVATE_PR_CONCURRENT_LIMIT: "0"
+          RENOVATE_PR_HOURLY_LIMIT: "0"
+          RENOVATE_FORK_PROCESSING: "enabled"
