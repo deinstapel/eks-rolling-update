@@ -26,7 +26,7 @@ resource "aws_iam_policy" "eks_rolling_update" {
 
 module "iam_assumable_role_eks_rolling_update" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "4.24.1"
+  version                       = "5.28.0"
   create_role                   = true
   role_name                     = var.app_name
   provider_url                  = var.eks_oidc_provider
