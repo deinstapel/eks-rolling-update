@@ -177,6 +177,7 @@ A terraform example on how to deploy `eks-rolling-update` as a Kubernetes CronJo
 | Environment Variable       | Description                                                                                                                | Default                                  |
 |----------------------------|----------------------------------------------------------------------------------------------------------------------------|------------------------------------------|
 | K8S_AUTOSCALER_ENABLED     | If True Kubernetes Autoscaler will be paused before running update                                                         | False                                    |
+| K8S_AUTOSCALER_RESUME_ON_ERROR | If True, Kubernetes Autoscaler will be automatically resumed in case of a previous failure. | True |
 | K8S_AUTOSCALER_NAMESPACE   | Namespace where Kubernetes Autoscaler is deployed                                                                          | default                                  |
 | K8S_AUTOSCALER_DEPLOYMENT  | Deployment name of Kubernetes Autoscaler                                                                                   | cluster-autoscaler                       |
 | K8S_AUTOSCALER_REPLICAS    | Number of replicas to scale back up to after Kubernentes Autoscaler paused                                                 | 2                                        |
@@ -185,6 +186,7 @@ A terraform example on how to deploy `eks-rolling-update` as a Kubernetes CronJo
 | TAINT_NODES                | Replace the default **cordon**-before-drain strategy with `NoSchedule` **taint**ing, as a workaround for K8S < `1.19` [prematurely removing cordoned nodes](https://github.com/kubernetes/kubernetes/issues/65013) from `Service`-managed `LoadBalancer`s | False |
 | EXTRA_DRAIN_ARGS           | Additional space-delimited args to supply to the `kubectl drain` function, e.g `--force=true`. See `kubectl drain -h`      | ""                                       |
 | ENFORCED_DRAINING          | If draining fails for a node due to corrupted `PodDisruptionBudget`s or failing pods, retry draining with `--disable-eviction=true` and `--force=true` for this node to prevent aborting the script. This is useful to get the rolling update done in development and testing environments and **should not be used in productive environments** since this will bypass checking `PodDisruptionBudget`s | False |
+| UNCORDON_ON_DRAIN_ERROR | If true, and a node can't be drained, the rolling-update will afterwards mark the node as schedulable again to minimize workload interruption | True |
 
 ## Run Modes
 
