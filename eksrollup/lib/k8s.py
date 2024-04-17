@@ -5,6 +5,7 @@ import subprocess
 import time
 import sys
 from .logger import logger
+from .exceptions import NodeNotDrainedException
 from eksrollup.config import app_config
 
 
@@ -122,7 +123,7 @@ def delete_node(node_name):
         logger.info("Exception when calling CoreV1Api->delete_node: {}".format(e))
 
 
-def cordon_node(node_name):
+def cordon_node(node_name, cordon=True):
     """
     Cordon a kubernetes node to avoid new pods being scheduled on it
     """
@@ -131,14 +132,14 @@ def cordon_node(node_name):
 
     # create an instance of the API class
     k8s_api = client.CoreV1Api()
-    logger.info("Cordoning k8s node {}...".format(node_name))
+    logger.info("Cordoning k8s node {}={}...".format(node_name, cordon))
     try:
-        api_call_body = client.V1Node(spec=client.V1NodeSpec(unschedulable=True))
+        api_call_body = client.V1Node(spec=client.V1NodeSpec(unschedulable=cordon))
         if not app_config['DRY_RUN']:
             k8s_api.patch_node(node_name, api_call_body)
         else:
             k8s_api.patch_node(node_name, api_call_body, dry_run=True)
-        logger.info("Node cordoned")
+        logger.info("Node (un)cordoned")
     except ApiException as e:
         logger.info("Exception when calling CoreV1Api->patch_node: {}".format(e))
 
@@ -181,7 +182,7 @@ def drain_node(node_name):
         kubectl_args += ['--dry-run']
 
     logger.info('Draining worker node with {}...'.format(' '.join(kubectl_args)))
-    result = subprocess.run(kubectl_args)
+    result = subprocess.run(kubectl_args, capture_output=True)
 
     # If returncode is non-zero run enforced draining of the node or raise a CalledProcessError.
     if result.returncode != 0:
@@ -191,11 +192,11 @@ def drain_node(node_name):
                 '--force=true'
             ]
             logger.info('There was an error draining the worker node, proceed with enforced draining ({})...'.format(' '.join(kubectl_args)))
-            enforced_result = subprocess.run(kubectl_args)
+            enforced_result = subprocess.run(kubectl_args, capture_output=True)
             if enforced_result.returncode != 0:
-                raise Exception("Node not drained properly with enforced draining enabled. Exiting")
+                raise NodeNotDrainedException(enforced_result.stdout, node_name, True)
         else:
-            raise Exception("Node not drained properly. Exiting")
+            raise NodeNotDrainedException(result.stdout, node_name, False)
 
 
 def k8s_nodes_ready(max_retry=app_config['GLOBAL_MAX_RETRY'], wait=app_config['GLOBAL_HEALTH_WAIT']):

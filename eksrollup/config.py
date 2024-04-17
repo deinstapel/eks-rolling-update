@@ -13,6 +13,7 @@ app_config = {
     'K8S_AUTOSCALER_NAMESPACE': os.getenv('K8S_AUTOSCALER_NAMESPACE', 'default'),
     'K8S_AUTOSCALER_DEPLOYMENT': os.getenv('K8S_AUTOSCALER_DEPLOYMENT', 'cluster-autoscaler'),
     'K8S_AUTOSCALER_REPLICAS': int(os.getenv('K8S_AUTOSCALER_REPLICAS', 2)),
+    'K8S_AUTOSCALER_RESUME_ON_ERROR': str_to_bool(os.getenv('K8S_AUTOSCALER_RESUME_ON_ERROR', True)),
     'K8S_CONTEXT': os.getenv('K8S_CONTEXT', None),
     'K8S_PROXY_BYPASS': str_to_bool(os.getenv('K8S_PROXY_BYPASS', False)),
     'ASG_DESIRED_STATE_TAG': os.getenv('ASG_DESIRED_STATE_TAG', 'eks-rolling-update:desired_capacity'),
@@ -33,5 +34,6 @@ app_config = {
     'TAINT_NODES': str_to_bool(os.getenv('TAINT_NODES', False)),
     'BATCH_SIZE': int(os.getenv('BATCH_SIZE', 0)),
     'ENFORCED_DRAINING': str_to_bool(os.getenv('ENFORCED_DRAINING', False)),
+    'UNCORDON_ON_DRAIN_ERROR': str_to_bool(os.getenv('UNCORDON_ON_DRAIN_ERROR', True)),
     'ASG_NAMES': os.getenv('ASG_NAMES', '').split()
 }
