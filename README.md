@@ -185,7 +185,8 @@ A terraform example on how to deploy `eks-rolling-update` as a Kubernetes CronJo
 | TAINT_NODES                | Replace the default **cordon**-before-drain strategy with `NoSchedule` **taint**ing, as a workaround for K8S < `1.19` [prematurely removing cordoned nodes](https://github.com/kubernetes/kubernetes/issues/65013) from `Service`-managed `LoadBalancer`s | False |
 | EXTRA_DRAIN_ARGS           | Additional space-delimited args to supply to the `kubectl drain` function, e.g `--force=true`. See `kubectl drain -h`      | ""                                       |
 | ENFORCED_DRAINING          | If draining fails for a node due to corrupted `PodDisruptionBudget`s or failing pods, retry draining with `--disable-eviction=true` and `--force=true` for this node to prevent aborting the script. This is useful to get the rolling update done in development and testing environments and **should not be used in productive environments** since this will bypass checking `PodDisruptionBudget`s | False |
-
+| K8S_WORKER_GROUPS_ORDER  | List of ASG group names in order to be upgraded. It search for each list item in the nodes group names | ["first_group", "second_group", "third_group"]
+| K8S_PARALLEL_NODES_COUNT | Maximum Node count to be updated in parallel | 5
 ## Run Modes
 
 There are a number of different values which can be set for the `RUN_MODE` environment variable.
